@@ -1,0 +1,94 @@
+            
+            // 加载巡查记录数据
+            const inspResponse = await fetch('/data/2-巡查记录.xls');
+            const inspBuffer = await inspResponse.arrayBuffer();
+            const inspWorkbook = XLSX.read(inspBuffer, { type: 'array' });
+            const inspSheet = inspWorkbook.Sheets[inspWorkbook.SheetNames[0]];
+            this.inspectionData = XLSX.utils.sheet_to_json(inspSheet);
+            
+            // 加载隐患记录数据
+            const hazardResponse = await fetch('/data/3-隐患记录.xls');
+            const hazardBuffer = await hazardResponse.arrayBuffer();
+            const hazardWorkbook = XLSX.read(hazardBuffer, { type: 'array' });
+            const hazardSheet = hazardWorkbook.Sheets[hazardWorkbook.SheetNames[0]];
+            this.hazardData = XLSX.utils.sheet_to_json(hazardSheet);
+
+            /**读取Excel文件 */
+        async readExcelFile(file: File): Promise<any[]> {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e: ProgressEvent<FileReader>) => {
+                    try {
+                        const data = new Uint8Array(e.target?.result as ArrayBuffer);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const sheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                        resolve(jsonData);
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+                reader.onerror = () => reject(new Error('文件读取失败'));
+                reader.readAsArrayBuffer(file);
+            });
+        },
+        
+            <!-- 统计结果区域 -->
+            <div class="result-section" v-if="reportData.length > 0">
+                <h2>个人工作量统计报表</h2>
+                <el-table :data="reportData" border style="width: 100%" :scroll="{ x: 2000 }">
+                    <el-table-column prop="emergencyCenter" label="应消中心" width="120"></el-table-column>
+                    <el-table-column prop="responsiblePerson" label="责任人" width="100"></el-table-column>
+                    <el-table-column prop="managedObjects" label="负责对象数" width="100"></el-table-column>
+                    <el-table-column prop="inspectedObjects" label="已检查对象数" width="120"></el-table-column>
+                    <el-table-column prop="inspectionCount" label="检查次数" width="100"></el-table-column>
+                    <el-table-column prop="hazardFoundInspections" label="发现隐患检查次数" width="140"></el-table-column>
+                    <el-table-column prop="hazardCount" label="隐患总数" width="100"></el-table-column>
+                    <el-table-column prop="generalHazards" label="一般隐患" width="100"></el-table-column>
+                    <el-table-column prop="majorHazards" label="重大隐患" width="100"></el-table-column>
+                    <el-table-column prop="fixedGeneralHazards" label="已整改一般隐患" width="130"></el-table-column>
+                    <el-table-column prop="fixedMajorHazards" label="已整改重大隐患" width="130"></el-table-column>
+                    <el-table-column prop="inspectionCoverage" label="检查覆盖率" width="110">
+                        <template #default="scope">
+                            <span>{{ scope.row.inspectionCoverage }}%</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="hazardDiscoveryRate" label="隐患发现率" width="110">
+                        <template #default="scope">
+                            <span>{{ scope.row.hazardDiscoveryRate }}%</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="majorHazardRatio" label="重大隐患占比" width="120">
+                        <template #default="scope">
+                            <span>{{ scope.row.majorHazardRatio }}%</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="generalHazardFixRate" label="一般隐患整改率" width="130">
+                        <template #default="scope">
+                            <span>{{ scope.row.generalHazardFixRate }}%</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="majorHazardFixRate" label="重大隐患整改率" width="130">
+                        <template #default="scope">
+                            <span>{{ scope.row.majorHazardFixRate }}%</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="overdueHazards" label="逾期隐患数" width="110"></el-table-column>
+                    <el-table-column prop="overdueUnfixedRate" label="隐患逾期未整改率" width="140">
+                        <template #default="scope">
+                            <span>{{ scope.row.overdueUnfixedRate }}%</span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                
+                <div style="margin-top: 20px;">
+                    <el-button type="success" @click="exportReport">导出Excel报表</el-button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    ['对象标识'] || obj.id || obj['编号'] || ''
