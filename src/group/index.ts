@@ -80,9 +80,9 @@ const app = createApp({
                     if (result.length > 0) {
                         this.resultColumns = Object.keys(result[0]).map(key => ({ prop: key, label: key }));
                     }
-                    ElMessage.success('查重完成');
+                    ElMessage.success('完成');
                 } catch (error: any) {
-                    ElMessage.error(`查重失败: ${error.message}`);
+                    ElMessage.error(`失败: ${error.message}`);
                 }
                 finally{
                     this.isProcessing = false;
@@ -94,7 +94,7 @@ const app = createApp({
                 ElMessage.warning('没有可导出的结果');
                 return;
             }
-            const fileName = WebHelper.getExportFileName('查重结果.xlsx');            
+            const fileName = WebHelper.getExportFileName('分组结果.xlsx');            
             ExcelTool.exportExcel(this.resultData, fileName, true);
         },
         handleSizeChange(this: any, val: number) {

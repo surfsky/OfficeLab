@@ -5,7 +5,7 @@
 功能
 
 - [X] Excel 文档比对
-- [x] Excel 提取唯一值
+- [x] Excel 去重
 - [x] Excel 分组统计
 
 备注
