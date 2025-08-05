@@ -33,7 +33,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'src/index.html'),
         distinct: resolve(__dirname, 'src/distinct/index.html'),
-        comparer: resolve(__dirname, 'src/comparer/index.html')
+        comparer: resolve(__dirname, 'src/comparer/index.html'),
+        group: resolve(__dirname, 'src/group/index.html'),
       },
       output: {
         manualChunks: undefined,
